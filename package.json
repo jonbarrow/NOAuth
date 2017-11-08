@@ -1,7 +1,7 @@
 {
   "name": "noauth",
   "version": "1.0.0",
-  "description": "",
+  "description": "NodeJS, Electron based oAuth system based around Nintendo accounts. Uses Nintendo as a backend",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
