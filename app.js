@@ -1,6 +1,5 @@
 let https = require('https'),
     electron = require('electron'),
-	electron_reload = require('electron-reload')(__dirname),
     path = require('path'),
     url = require('url'),
     zlib = require('zlib'),
