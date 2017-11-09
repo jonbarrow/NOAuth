@@ -11,21 +11,22 @@ addEvent(document.querySelector('button'), 'click', () => {
 ipcRenderer.on('user_data', (event, user_data) => {
     console.log(user_data);
     document.querySelector('.login').classList.add('hidden');
-    let mii = user_data.mii;
+    let mii = user_data.mii,
+        item = document.getElementById('TEMPLATE_MII').content.firstElementChild.cloneNode(true);
+    
+    document.querySelector('.welcome').innerHTML = 'Welcome, ' + user_data.nickname + '!';
     if (mii) {
-        let item = document.getElementById('TEMPLATE_MII').content.firstElementChild.cloneNode(true);
-
-        document.querySelector('.welcome').innerHTML = 'Welcome, ' + user_data.nickname + '!';
         item.querySelector('img').src = 'https://{}/2.0.0/miis/{}/image/{}.png?type=face&width=128'.format(
             mii.imageOrigin,
             mii.id,
             mii.etag
         );
         item.querySelector('img').classList.add(mii.favoriteColor);
-        document.querySelector('.logged-in .head').appendChild(item);
     } else {
-
+        item.querySelector('img').src = './images/mii_default.png';
     }
+    document.querySelector('.logged-in .head').appendChild(item);
+
     for (let mii of user_data.candidateMiis) {
         let item = document.getElementById('TEMPLATE_MII').content.firstElementChild.cloneNode(true);
 
