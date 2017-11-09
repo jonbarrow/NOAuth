@@ -1,16 +1,17 @@
 let https = require('https'),
     electron = require('electron'),
+    electron_reload = require('electron-reload')(__dirname),
     path = require('path'),
     url = require('url'),
     zlib = require('zlib'),
     querystring = require('querystring'),
     crypto = require('crypto'),
-	protocol = electron.protocol,
+    protocol = electron.protocol,
     BrowserWindow = electron.BrowserWindow,
     ipcMain = electron.ipcMain,
     app = electron.app;
    
-let ApplicationWindow;
+let MainWindow, LoginWindow;
 let GLOBAL_VERIFIER;
 
 const ALPHABET = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -50,6 +51,17 @@ const API_CONFIG = {
             'Host': 'api-lp1.znc.srv.nintendo.net',
             'Connection': 'Keep-Alive',
             'Accept-Encoding': 'gzip'
+        },
+        GET_TOKEN: {
+            'X-ProductVersion': '1.1.0',
+            'X-Platform': 'Android',
+            'User-Agent': 'com.nintendo.znca/1.1.0 (Android/7.0)',
+            'Accept': 'application/json',
+            'Authorization': null,
+            'Content-Type': 'application/json; charset=utf-8',
+            'Content-Length': '977',
+            'Host': 'api-lp1.znc.srv.nintendo.net',
+            'Connection': 'Keep-Alive'
         }
     },
     URLS: {
@@ -57,7 +69,8 @@ const API_CONFIG = {
         SESSION_TOKEN: 'https://accounts.nintendo.com/connect/1.0.0/api/session_token',
         TOKEN: 'https://accounts.nintendo.com/connect/1.0.0/api/token',
         USER_ME: 'https://api.accounts.nintendo.com/2.0.0/users/me',
-        LOGIN: 'https://api-lp1.znc.srv.nintendo.net/v1/Account/Login'
+        LOGIN: 'https://api-lp1.znc.srv.nintendo.net/v1/Account/Login',
+        GET_TOKEN: 'https://api-lp1.znc.srv.nintendo.net/v1/Account/GetToken'
     },
     PAYLOADS: {
         AUTHORIZE: {
@@ -81,6 +94,15 @@ const API_CONFIG = {
             session_token: null,
         },
         LOGIN: {
+            parameter: {
+                naIdToken: null,
+                naCountry: null,
+                naBirthday: null,
+                language: null,
+                f: null
+            }
+        },
+        GET_TOKEN: {
             parameter: {
                 naIdToken: null,
                 naCountry: null,
@@ -147,7 +169,7 @@ app.on('window-all-closed', () => {
 });
 
 ipcMain.on('open_login_form', () => {
-    let LoginWindow = new BrowserWindow(),
+    LoginWindow = new BrowserWindow(),
         headers = API_CONFIG.HEADERS.AUTHORIZE,
         options = {
             userAgent: headers['User-Agent'],
@@ -159,30 +181,32 @@ ipcMain.on('open_login_form', () => {
 });
 
 function createWindow(file) {
-    ApplicationWindow = new BrowserWindow();
+    MainWindow = new BrowserWindow();
 
-    ApplicationWindow.setMenu(null);
-    ApplicationWindow.maximize();
+    MainWindow.setMenu(null);
+    MainWindow.maximize();
 
-    ApplicationWindow.webContents.on('did-finish-load', () => {
-        ApplicationWindow.show();
-        ApplicationWindow.focus();
+    MainWindow.webContents.on('did-finish-load', () => {
+        MainWindow.show();
+        MainWindow.focus();
     });
     
-    ApplicationWindow.loadURL(url.format({
+    MainWindow.loadURL(url.format({
         pathname: path.join(__dirname, '/app/index.html'),
         protocol: 'file:',
         slashes: true
     }));
 
-    ApplicationWindow.on('closed', () => {
-        ApplicationWindow = null;
+    MainWindow.on('closed', () => {
+        MainWindow = null;
     });
 
-    ApplicationWindow.webContents.on('new-window', function(event, url) {
+    MainWindow.webContents.on('new-window', function(event, url) {
         event.preventDefault();
         shell.openExternal(url);
     });
+
+    //MainWindow.webContents.openDevTools();
 }
 
 function generateLoginURL() {
@@ -230,7 +254,9 @@ function obtainDetailedUserInformation(session_token) {
             id_token = access_session.id_token;
             
         getUserInfo(access_token, (user_data) => {
-            loginUser(access_session, user_data, (user_data_extended) => {
+            MainWindow.webContents.send('user_data', user_data);
+            LoginWindow.close();
+            /*loginUser(access_session, user_data, (user_data_extended) => {
                 console.log(user_data);
                 console.log('\n\n\n');
                 console.log(user_data_extended);
@@ -238,20 +264,22 @@ function obtainDetailedUserInformation(session_token) {
                 // Everything is stuck here since loginUser() fails every time.
                 // Can't continue until `f` is cracked.
 
-            });
+            });*/
         });
         
     });
 }
 
 function loginUser(access_session, user_data, cb) {
-    let token_url = new url.URL(API_CONFIG.URLS.LOGIN);
+    let token_url = new url.URL(API_CONFIG.URLS.GET_TOKEN);
     
-    let headers = API_CONFIG.HEADERS.LOGIN,
-        payload = API_CONFIG.PAYLOADS.LOGIN,
+    let headers = API_CONFIG.HEADERS.GET_TOKEN,
+        payload = API_CONFIG.PAYLOADS.GET_TOKEN,
         hash = crypto.createHash('sha256').update(access_session.id_token).digest().toString('hex');
         // wtf is this. I've tried so many things, even hashing the whole session object.
         // Nothing seems to work.
+
+    headers.Authorization = 'Bearer ' + access_session.access_token;
 
     payload.parameter.naIdToken = access_session.id_token;
     payload.parameter.naCountry = user_data.country;
@@ -271,15 +299,8 @@ function loginUser(access_session, user_data, cb) {
     let end_buffer = '';
     
     let request = https.request(post_options, (response) => {
-        let gunzip = zlib.createGunzip();            
-        response.pipe(gunzip);
-
-        gunzip.on('data', (chunk) => {
-            end_buffer += chunk.toString();
-        }).on('end', () => {
-            return cb(JSON.parse(end_buffer));
-        }).on('error', (error) => {
-            throw new Error(error)
+        response.on('data', (chunk) => {
+            return cb(JSON.parse(chunk.toString()));
         });
     });
 

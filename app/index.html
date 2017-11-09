@@ -11,12 +11,38 @@
         <script type="text/javascript" src="js/main.js" async defer></script>
     </head>
     <body>
-        <div class="container">
-            <div>
-                <button class="text-l font-semibold rounded-full px-4 py-1 leading-normal bg-white border-2 border-orange text-red hover:bg-orange hover:text-white">
-                    Login With Nintendo
-                </button>
+        <div class="login">
+            <div class="container">
+                <div>
+                    <button class="text-l font-semibold rounded-full px-4 py-1 leading-normal bg-white border-2 border-orange text-red hover:bg-orange hover:text-white">
+                        Login With Nintendo
+                    </button>
+                </div>
             </div>
         </div>
+        <div class="logged-in hidden">
+            <div class="bg-white mx-auto max-w-lg min-w-sm shadow-lg rounded-lg overflow-hidden">
+                <div class="header items-center">
+                    <div class="mx-auto mb-4 mb-0 mr-4 ml-0 text-center">
+                        <p class="welcome text-xl"></p>
+                    </div>
+                    <div class="head flex flex-wrap items-center"></div>
+                </div>
+                <hr>
+                <div class="miis items-center">
+                    <div class="mx-auto mb-4 mb-0 mr-4 ml-0 text-center">
+                        <p class="text-xl">Miis</p>
+                    </div>
+                    <div class="mii-list flex flex-wrap items-center"></div>
+                </div>
+            </div>
+        </div>
+
+        <template id="TEMPLATE_MII">
+            <div class="items-center mii mx-auto mb-4 mb-0 mr-4 ml-0 text-center">
+                <p class="text-xl text-center"></p>
+                <img class="profile-picture block h-16 h-24 rounded-full">        
+            </div>
+        </template>
     </body>
 </html>
