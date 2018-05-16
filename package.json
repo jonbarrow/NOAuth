@@ -1,17 +1,18 @@
 {
   "name": "noauth",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "NodeJS, Electron based oAuth system based around Nintendo accounts. Uses Nintendo as a backend",
   "main": "app.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "lint": "./node_modules/.bin/eslint .",
+    "lint-fix": "./node_modules/.bin/eslint . --fix"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "electron": "^1.7.9"
+    "electron": "^2.0.0"
   },
   "devDependencies": {
-    "electron-reload": "^1.2.2"
+    "eslint": "^4.19.1"
   }
 }

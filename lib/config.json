@@ -1,0 +1,72 @@
+{
+    "HEADERS": {
+        "AUTHORIZE": {
+            "Accept-Encoding": "gzip",
+            "User-Agent": "OnlineLounge/1.0.4 NASDKAPI Android"
+        },
+        "SERVICE_TOKEN": {
+            "Host": "accounts.nintendo.com",
+            "Content-Type": "application/json; charset=utf-8",
+            "Connection": "keep-alive",
+            "User-Agent": "OnlineLounge/1.0.4 NASDKAPI iOS",
+            "Accept": "application/json",
+            "Accept-Language": "en-US",
+            "Accept-Encoding": "gzip, deflate"
+        },
+        "USER_ME": {
+            "Host": "api.accounts.nintendo.com",
+            "Connection": "keep-alive",
+            "Accept": "application/json",
+            "User-Agent": "OnlineLounge/1.0.4 NASDKAPI iOS",
+            "Accept-Language": "en-US",
+            "Authorization": null,
+            "Accept-Encoding": "gzip, deflate"
+        },
+        "LOGIN": {
+            "Host": "api-lp1.znc.srv.nintendo.net",
+			"Accept-Language": "en-US",
+			"User-Agent": "com.nintendo.znca/1.1.2 (Android/7.1.2)",
+			"Accept": "application/json",
+			"X-ProductVersion": "1.1.2",
+			"Content-Type": "application/json; charset=utf-8",
+			"Connection": "keep-alive",
+			"Authorization": "Bearer",
+			"Content-Length": "987",
+			"X-Platform": "Android",
+			"Accept-Encoding": "gzip"
+        },
+        "GET_TOKEN": {
+            "X-ProductVersion": "1.1.0",
+            "X-Platform": "Android",
+            "User-Agent": "com.nintendo.znca/1.1.0 (Android/7.0)",
+            "Accept": "application/json",
+            "Authorization": null,
+            "Content-Type": "application/json; charset=utf-8",
+            "Content-Length": "977",
+            "Host": "api-lp1.znc.srv.nintendo.net",
+            "Connection": "Keep-Alive"
+		},
+		"FRIEND_LIST": {
+			"X-ProductVersion": "1.1.0",
+			"X-Platform": "Android",
+			"User-Agent": "com.nintendo.znca/1.1.0 (Android/7.0)",
+			"Accept": "application/json",
+			"Authorization": null,
+			"Content-Type": "application/json; charset=utf-8",
+			"Content-Length": 230,
+			"Host": "api-lp1.znc.srv.nintendo.net",
+			"Connection": "Keep-Alive",
+			"Accept-Encoding": "gzip"
+		}
+    },
+    "URLS": {
+        "AUTHORIZE": "https://accounts.nintendo.com/connect/1.0.0/authorize",
+        "SESSION_TOKEN": "https://accounts.nintendo.com/connect/1.0.0/api/session_token",
+        "SERVICE_TOKEN": "https://accounts.nintendo.com/connect/1.0.0/api/token",
+		"USER_ME": "https://api.accounts.nintendo.com/2.0.0/users/me",
+		
+        "LOGIN": "https://api-lp1.znc.srv.nintendo.net/v1/Account/Login",
+        "GET_TOKEN": "https://api-lp1.znc.srv.nintendo.net/v1/Account/GetToken",
+        "FRIEND_LIST": "https://api-lp1.znc.srv.nintendo.net/v1/User/List"
+    }
+}
